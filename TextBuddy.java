@@ -1,3 +1,4 @@
+package textbuddies;
 //Module: CS2103T
 //Matric No.: A0108494Y
 //Name: Johann Thang Zhirong
@@ -71,12 +72,33 @@ public class TextBuddy {
 			fileDelete(command, file, br);
 			return MSG_RIGHT;
 		}
+		else if(command.substring(0,6).equals("search")){
+			fileSearch(command,file,br);
+			return MSG_RIGHT;
+		}
 		else if(command.substring(0,7).equals("display")){
 			fileDisplay(checkEmpty, br);
 			return MSG_RIGHT;
 		}
+		
 		br.close();
 		return MSG_WRONG;
+	}
+	
+	private static void fileSearch(String command, File file, BufferedReader br)
+			throws IOException {
+		String lineRead="";
+		String tokenWithSpace = " " + command.substring(7).toLowerCase() + " ";
+		String lineReadWithSpace = "";
+		int n = 0;
+		do{
+			lineRead = br.readLine();
+			lineReadWithSpace = lineRead.toLowerCase() + " ";//add whitespace to prevent exclusion of search word if at the back
+			if(lineReadWithSpace.contains(tokenWithSpace)){
+				n++;
+				System.out.println(String.valueOf(n) + ". " + lineRead.substring(3));
+			};
+		}while(lineRead!="");
 	}
 
 	private static void fileDisplay(String checkEmpty, BufferedReader br)
