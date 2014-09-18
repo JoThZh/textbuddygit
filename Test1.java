@@ -17,7 +17,16 @@ public class Test1 {
 	public void testSearch() throws IOException{
 		
 		BufferedReader br = new BufferedReader(new FileReader(file));
-		assertEquals("expect item to be found","item",TextBuddy.fileSearch("search item",file,br));//after item is already inserted
+		assertEquals("item",TextBuddy.fileSearch("search item",br));//after 'item' is already inserted
+		//fail("Not yet implemented");
+		br.close();
+	}
+	
+	@Test
+	public void testSearch2() throws IOException{
+		
+		BufferedReader br = new BufferedReader(new FileReader(file));
+		assertEquals("Word not found",TextBuddy.fileSearch("search object",br));//'object' not inserted
 		//fail("Not yet implemented");
 		br.close();
 	}
@@ -25,7 +34,7 @@ public class Test1 {
 	@Test(expected = NullPointerException.class)
 	  public void testExceptionIsThrown() throws IOException{
 		BufferedReader br = new BufferedReader(new FileReader(file));
-		TextBuddy.fileSearch("search item",file,br);
+		TextBuddy.fileSearch("search item",br);
 		br.close();
 	  }
 }

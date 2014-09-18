@@ -20,14 +20,15 @@ public class TextBuddy {
 	private static final String MSG_DELETEFAIL = "Delete operation is failed.";
 	private static final String MSG_CLEAR = "All content deleted from ";
 	private static final String MSG_EMPTY = " is empty";
+	private static final String MSG_NOT_FOUND = "Word not found";
 
 	public static void main(String[] args) throws Exception, IOException {
 		int cont = MSG_RIGHT;
 		System.out.println("Welcome to TextBuddy. " + args[0] + " is ready for use");
 		textFile = args[0];
-		Scanner sc = new Scanner(System.in);
+		
 		do{
-			cont = commandChoose(sc, textFile);
+			cont = commandChoose(textFile);
 			//System.out.println();
 			if(cont == MSG_WRONG){
 				System.out.println("wrong command");
@@ -35,8 +36,10 @@ public class TextBuddy {
 		}while(cont!=MSG_END);
 	}
 
-	private static int commandChoose(Scanner sc, String newFile) throws IOException {
+	public static int commandChoose(String newFile) throws IOException {
+		
 		System.out.print("command: ");
+		Scanner sc = new Scanner(System.in);
 		String command = ""+ sc.nextLine();
 		String deleteElig = "temporaryfiller";
 		String redisplay = "";
@@ -73,7 +76,7 @@ public class TextBuddy {
 			return MSG_RIGHT;
 		}
 		else if(command.substring(0,6).equals("search")){
-			fileSearch(command,file,br);
+			fileSearch(command,br);
 			return MSG_RIGHT;
 		}
 		else if(command.substring(0,7).equals("display")){
@@ -85,8 +88,36 @@ public class TextBuddy {
 		return MSG_WRONG;
 	}
 	
-	public static String fileSearch(String command, File file, BufferedReader br)
+	public static void fileSort(String command, File file, BufferedReader br) throws IOException{
+		String lineRead = "";
+		String nextlineRead = "";
+		String temp = "";
+		FileWriter fw = new FileWriter(file.getAbsoluteFile(), false);//no append
+		BufferedWriter bw = new BufferedWriter(fw);
+		do{
+			lineRead = br.readLine().substring(3,4);
+			br.mark(10);
+			nextlineRead = br.readLine().substring(3,4);
+			
+			if(Integer.valueOf(lineRead)>Integer.valueOf(nextlineRead)){
+				br.reset();
+				bw.write(nextlineRead);
+				bw.newLine();
+				bw.write(lineRead);
+				br.readLine();
+			}
+			else{
+				br.reset();
+				br.readLine();
+			}
+			
+			
+		}while(lineRead!="");
+	}
+	
+	public static String fileSearch(String command, BufferedReader br)
 			throws IOException {
+		
 		String lineRead="";
 		String tokenWithSpace = " " + command.substring(7).toLowerCase() + " ";
 		String lineReadWithSpace = "";
@@ -95,19 +126,27 @@ public class TextBuddy {
 		do{
 			lineRead = br.readLine();
 			if(lineRead==""){
-				break;
+				return returnable;
 			}
 			else{
-				lineReadWithSpace = lineRead.toLowerCase() + " ";//add whitespace to prevent exclusion of search word if at the back
+				lineReadWithSpace = lineRead + " ";
+				lineReadWithSpace = lineReadWithSpace.toLowerCase();//add whitespace to prevent exclusion of search word if at the back
 			}
 			if(lineReadWithSpace.contains(tokenWithSpace)){
 				n++;
 				System.out.println(String.valueOf(n) + ". " + lineRead.substring(3));
 				returnable = lineRead;
-			};
-		}while(lineRead!="");
+			}
+		}while(lineRead!=null);
+		
+		if(returnable.equals("")){
+			returnable = MSG_NOT_FOUND;
+			System.out.println(MSG_NOT_FOUND);
+		}
 		
 		return returnable;
+		
+		
 	}
 
 	private static void fileDisplay(String checkEmpty, BufferedReader br)
