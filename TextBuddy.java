@@ -67,6 +67,10 @@ public class TextBuddy {
 			fileAdd(command, file, br);
 			return MSG_RIGHT;
 		}
+		else if(command.substring(0,4).equals("sort")){
+			fileSort(file, br);
+			return MSG_RIGHT;
+		}
 		else if(command.substring(0,5).equals("clear")){
 			fileClear(deleteElig, file, br);
 			return MSG_RIGHT;
@@ -88,32 +92,59 @@ public class TextBuddy {
 		return MSG_WRONG;
 	}
 	
-	public static void fileSort(String command, File file, BufferedReader br) throws IOException{
-		String lineRead = "";
-		String nextlineRead = "";
-		String temp = "";
-		FileWriter fw = new FileWriter(file.getAbsoluteFile(), false);//no append
+	public static String fileSort(File file, BufferedReader br) throws IOException{
+	
+		String lineRead = " ";
+		String temp2 = "";
+		int i = 0;
+		
+		ArrayList<String> list = new ArrayList<String>();
+		
+		lineRead = br.readLine();
+		if(lineRead==null){
+			System.out.println(textFile + MSG_EMPTY);
+			return "";
+		}
+		System.out.println("sorted");
+		
+		if(lineRead!=null){
+			lineRead = lineRead.substring(3);
+			list.add(lineRead);
+		}
+		lineRead = br.readLine();
+		
+		if(lineRead!=null){
+			lineRead = lineRead.substring(3);
+		}
+		
+		while(lineRead!=null){
+			
+			for(i=0;i<list.size();i++){
+	
+				if(Character.getNumericValue(lineRead.charAt(0))<Character.getNumericValue(list.get(i).charAt(0))){
+					list.add(i,lineRead);
+					break;
+				}
+			}
+			if(i==list.size()){
+				list.add(lineRead);
+			}
+			lineRead = br.readLine();
+			if(lineRead!=null){
+				lineRead = lineRead.substring(3);
+			}
+			
+		}
+		for(i=0;i<list.size();i++){
+			temp2 += String.valueOf(i+1) + ". " + list.get(i) + "\r\n";
+		}
+		FileWriter fw = new FileWriter(file.getAbsoluteFile(),false);//no append
 		BufferedWriter bw = new BufferedWriter(fw);
-		do{
-			lineRead = br.readLine().substring(3,4);
-			br.mark(10);
-			nextlineRead = br.readLine().substring(3,4);
-			
-			if(Integer.valueOf(lineRead)>Integer.valueOf(nextlineRead)){
-				br.reset();
-				bw.write(nextlineRead);
-				bw.newLine();
-				bw.write(lineRead);
-				br.readLine();
-			}
-			else{
-				br.reset();
-				br.readLine();
-			}
-			
-			
-		}while(lineRead!="");
+		bw.write(temp2);
+		bw.close();
+		return temp2;
 	}
+			
 	
 	public static String fileSearch(String command, BufferedReader br)
 			throws IOException {
@@ -143,9 +174,8 @@ public class TextBuddy {
 			returnable = MSG_NOT_FOUND;
 			System.out.println(MSG_NOT_FOUND);
 		}
-		
+		br.close();
 		return returnable;
-		
 		
 	}
 

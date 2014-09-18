@@ -37,4 +37,13 @@ public class Test1 {
 		TextBuddy.fileSearch("search item",br);
 		br.close();
 	  }
+	
+	@Test
+	public void testSort() throws IOException{
+		
+		BufferedReader br = new BufferedReader(new FileReader(file));
+		assertEquals("1. item\r\n2. object\r\n",TextBuddy.fileSort(file,br));//'object' to be switched with 'item', add object then item
+		//fail("Not yet implemented");
+		br.close();
+	}
 }
