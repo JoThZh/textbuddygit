@@ -85,20 +85,29 @@ public class TextBuddy {
 		return MSG_WRONG;
 	}
 	
-	private static void fileSearch(String command, File file, BufferedReader br)
+	public static String fileSearch(String command, File file, BufferedReader br)
 			throws IOException {
 		String lineRead="";
 		String tokenWithSpace = " " + command.substring(7).toLowerCase() + " ";
 		String lineReadWithSpace = "";
 		int n = 0;
+		String returnable = "";
 		do{
 			lineRead = br.readLine();
-			lineReadWithSpace = lineRead.toLowerCase() + " ";//add whitespace to prevent exclusion of search word if at the back
+			if(lineRead==""){
+				break;
+			}
+			else{
+				lineReadWithSpace = lineRead.toLowerCase() + " ";//add whitespace to prevent exclusion of search word if at the back
+			}
 			if(lineReadWithSpace.contains(tokenWithSpace)){
 				n++;
 				System.out.println(String.valueOf(n) + ". " + lineRead.substring(3));
+				returnable = lineRead;
 			};
 		}while(lineRead!="");
+		
+		return returnable;
 	}
 
 	private static void fileDisplay(String checkEmpty, BufferedReader br)
