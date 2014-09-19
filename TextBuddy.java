@@ -2,7 +2,12 @@ package textbuddies;
 //Module: CS2103T
 //Matric No.: A0108494Y
 //Name: Johann Thang Zhirong
-//Tutorial Grp: C01
+//Tutorial Grp: T09
+
+/*This class is used to store and read text from a file. The user
+* can append new lines of text to the file; choose to delete specific
+* lines or all lines in the file; display all text in the file; exit the program; 
+* sort the lines according to alphabetical order; search for a line with input word*/
 
 //Precondition: Only integers and fixed command words are input. user does not input negative numbers
 
@@ -133,7 +138,7 @@ public class TextBuddy {
 		for(int i=0;i<list.size();i++){
 			temp2 += String.valueOf(i+1) + ". " + list.get(i) + "\r\n";
 		}
-		FileWriter fw = new FileWriter(file.getAbsoluteFile(),false);//no append
+		FileWriter fw = new FileWriter(file.getAbsoluteFile(),false);
 		BufferedWriter bw = new BufferedWriter(fw);
 		bw.write(temp2);
 		bw.close();
@@ -157,27 +162,24 @@ public class TextBuddy {
 					if(lineRead.charAt(j)<list.get(i).charAt(j)){
 						list.add(i,lineRead);
 						j++;
-						lineRead = br.readLine();
-						if(lineRead!=null){
-							lineRead = lineRead.substring(REMOVE_NUMBERING);
-						}
-						return lineRead;
+						return readLine(br);
 					}
 				}
 				
 				if(lineRead.charAt(j-1)==list.get(i).charAt(j-1) && lineRead.length()<list.get(i).length()){
 					list.add(i,lineRead);
-					lineRead = br.readLine();
-					if(lineRead!=null){
-						lineRead = lineRead.substring(REMOVE_NUMBERING);
-					}
-					return lineRead;
+					return readLine(br);
 				}
 			}
 		}
 		if(i==list.size()){
 			list.add(lineRead);
 		}
+		return readLine(br);
+	}
+
+	private static String readLine(BufferedReader br) throws IOException {
+		String lineRead;
 		lineRead = br.readLine();
 		if(lineRead!=null){
 			lineRead = lineRead.substring(REMOVE_NUMBERING);
@@ -289,12 +291,12 @@ public class TextBuddy {
 		try {
 			int n = 0;
 			String line;
-			//for appending
+			
 			FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
 			BufferedWriter bw = new BufferedWriter(fw);
 			FileReader fr = new FileReader(file.getAbsoluteFile());
 			BufferedReader br = new BufferedReader(fr);
-			//empty slot is found to write new line
+			
 			while((line=br.readLine())!=null){
 				n++;
 			}
