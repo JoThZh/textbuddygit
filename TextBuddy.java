@@ -23,6 +23,7 @@ public class TextBuddy {
 	private static final String MSG_NOT_FOUND = "Word not found";
 	private static final String MSG_WRONG = "wrong command";
 	private static final int DELETE_LENGTH = 7;
+	private static final int REMOVE_NUMBERING = 3;
 	
 
 	public static void main(String[] args) throws Exception, IOException {
@@ -45,7 +46,7 @@ public class TextBuddy {
 	public static String chooseCommand(String newFile, String command) throws IOException {
 
 		String deleteElig = "temporaryfiller";
-		String forCheckEmpty = "";
+		
 
 		File file = new File(newFile);
 		if (!file.exists()) {
@@ -84,7 +85,7 @@ public class TextBuddy {
 			return SYSTEM_RIGHT;
 		}
 		else if(command.substring(0,7).equals("display")){
-			fileDisplay(forCheckEmpty, br);
+			fileDisplay(br);
 			return SYSTEM_RIGHT;
 		}
 
@@ -105,7 +106,7 @@ public class TextBuddy {
 		}
 		System.out.println("sorted");
 		if(lineRead!=null){
-			lineRead = lineRead.substring(3);
+			lineRead = lineRead.substring(REMOVE_NUMBERING);
 			list.add(lineRead);
 		}
 
@@ -121,7 +122,7 @@ public class TextBuddy {
 		lineRead = br.readLine();
 
 		if(lineRead!=null){
-			lineRead = lineRead.substring(3);
+			lineRead = lineRead.substring(REMOVE_NUMBERING);
 		}
 
 		while(lineRead!=null){
@@ -158,7 +159,7 @@ public class TextBuddy {
 						j++;
 						lineRead = br.readLine();
 						if(lineRead!=null){
-							lineRead = lineRead.substring(3);
+							lineRead = lineRead.substring(REMOVE_NUMBERING);
 						}
 						return lineRead;
 					}
@@ -168,7 +169,7 @@ public class TextBuddy {
 					list.add(i,lineRead);
 					lineRead = br.readLine();
 					if(lineRead!=null){
-						lineRead = lineRead.substring(3);
+						lineRead = lineRead.substring(REMOVE_NUMBERING);
 					}
 					return lineRead;
 				}
@@ -179,7 +180,7 @@ public class TextBuddy {
 		}
 		lineRead = br.readLine();
 		if(lineRead!=null){
-			lineRead = lineRead.substring(3);
+			lineRead = lineRead.substring(REMOVE_NUMBERING);
 		}
 		return lineRead;
 	}
@@ -204,7 +205,7 @@ public class TextBuddy {
 			}
 			if(lineReadWithSpace.contains(tokenWithSpace)){
 				n++;
-				System.out.println(String.valueOf(n) + ". " + lineRead.substring(3));
+				System.out.println(String.valueOf(n) + ". " + lineRead.substring(REMOVE_NUMBERING));
 				returnable = lineRead;
 			}
 		}while(lineRead!=null);
@@ -218,8 +219,9 @@ public class TextBuddy {
 
 	}
 
-	private static void fileDisplay(String forCheckEmpty, BufferedReader br)
+	private static void fileDisplay(BufferedReader br)
 			throws IOException {
+		String forCheckEmpty = "";
 		String redisplay;
 		//read each line of text and print them
 		while((redisplay = br.readLine())!=null){
@@ -242,7 +244,7 @@ public class TextBuddy {
 		//text without the command is entered into method
 		String deleted = deleteText(command.substring(7), file);
 		if(deleted!=""){
-			System.out.println(MSG_DELETE + textFile + ": \"" + deleted.substring(3) + "\"");
+			System.out.println(MSG_DELETE + textFile + ": \"" + deleted.substring(REMOVE_NUMBERING) + "\"");
 		}
 		else
 			System.out.println(MSG_NO_DELETE);
@@ -325,7 +327,7 @@ public class TextBuddy {
 				if(n!=Integer.valueOf(numDelete)){
 					if(m==1){
 						//recombine sentence numbering and sentences by shifting sentences upwards 1 step to fill deleted sentence
-						tempText += String.valueOf(n-1) + ". " + transferLine.substring(3) + "\r\n";
+						tempText += String.valueOf(n-1) + ". " + transferLine.substring(REMOVE_NUMBERING) + "\r\n";
 					}
 					else//transfer simply
 						tempText += transferLine + "\r\n";
