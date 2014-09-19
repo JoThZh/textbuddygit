@@ -202,8 +202,7 @@ public class TextBuddy {
 				return returnable;
 			}
 			else{
-				lineReadWithSpace = lineRead + " ";
-				lineReadWithSpace = lineReadWithSpace.toLowerCase();//add whitespace to prevent exclusion of search word if at the back
+				lineReadWithSpace = addSpaceAndLowerCase(lineRead);
 			}
 			if(lineReadWithSpace.contains(tokenWithSpace)){
 				n++;
@@ -219,6 +218,13 @@ public class TextBuddy {
 		br.close();
 		return returnable;
 
+	}
+
+	private static String addSpaceAndLowerCase(String lineRead) {
+		String lineReadWithSpace;
+		lineReadWithSpace = lineRead + " ";
+		lineReadWithSpace = lineReadWithSpace.toLowerCase();//add whitespace to prevent exclusion of search word if at the back
+		return lineReadWithSpace;
 	}
 
 	private static void fileDisplay(BufferedReader br)
