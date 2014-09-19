@@ -26,7 +26,7 @@ public class TextBuddy {
 		int cont = MSG_RIGHT;
 		System.out.println("Welcome to TextBuddy. " + args[0] + " is ready for use");
 		textFile = args[0];
-		
+
 		do{
 			cont = commandChoose(textFile);
 			//System.out.println();
@@ -37,7 +37,7 @@ public class TextBuddy {
 	}
 
 	public static int commandChoose(String newFile) throws IOException {
-		
+
 		System.out.print("command: ");
 		Scanner sc = new Scanner(System.in);
 		String command = ""+ sc.nextLine();
@@ -87,55 +87,49 @@ public class TextBuddy {
 			fileDisplay(checkEmpty, br);
 			return MSG_RIGHT;
 		}
-		
+
 		br.close();
 		return MSG_WRONG;
 	}
-	
+
 	public static String fileSort(File file, BufferedReader br) throws IOException{
-	
+
 		String lineRead = " ";
-		String temp2 = "";
-		int i = 0;
 		
 		ArrayList<String> list = new ArrayList<String>();
-		
+
 		lineRead = br.readLine();
 		if(lineRead==null){
 			System.out.println(textFile + MSG_EMPTY);
 			return "";
 		}
 		System.out.println("sorted");
-		
 		if(lineRead!=null){
 			lineRead = lineRead.substring(3);
 			list.add(lineRead);
 		}
-		lineRead = br.readLine();
+
+		return sortArray(file, br, list);
+	}
+
+	private static String sortArray(File file, BufferedReader br, ArrayList<String> list)
+			throws IOException {
+		String lineRead = " ";
+		String temp2 = "";
+		int listSize;
 		
+		lineRead = br.readLine();
+
 		if(lineRead!=null){
 			lineRead = lineRead.substring(3);
 		}
-		
+
 		while(lineRead!=null){
-			
-			for(i=0;i<list.size();i++){
-	
-				if(Character.getNumericValue(lineRead.charAt(0))<Character.getNumericValue(list.get(i).charAt(0))){
-					list.add(i,lineRead);
-					break;
-				}
-			}
-			if(i==list.size()){
-				list.add(lineRead);
-			}
-			lineRead = br.readLine();
-			if(lineRead!=null){
-				lineRead = lineRead.substring(3);
-			}
-			
+			listSize = list.size();
+			lineRead = inputToArray(br, list, lineRead, listSize);
+
 		}
-		for(i=0;i<list.size();i++){
+		for(int i=0;i<list.size();i++){
 			temp2 += String.valueOf(i+1) + ". " + list.get(i) + "\r\n";
 		}
 		FileWriter fw = new FileWriter(file.getAbsoluteFile(),false);//no append
@@ -144,11 +138,50 @@ public class TextBuddy {
 		bw.close();
 		return temp2;
 	}
+
+	private static String inputToArray(BufferedReader br,
+			ArrayList<String> list, String lineRead, int listSize)
+			throws IOException {
+		int i = 0;
+		int j = 0;
+		for(i=0;i<listSize;i++){
 			
-	
+			if(Character.getNumericValue(lineRead.charAt(0))<Character.getNumericValue(list.get(i).charAt(0))){
+				list.add(i,lineRead);
+				break;
+			}
+			else if(Character.getNumericValue(lineRead.charAt(0))==Character.getNumericValue(list.get(i).charAt(0))){
+				for(j=0;j<Math.min(lineRead.length(),list.get(i).length());j++){
+					if(lineRead.charAt(j)<list.get(i).charAt(j)){
+						list.add(i,lineRead);
+						j++;
+						lineRead = br.readLine();
+						if(lineRead!=null){
+							lineRead = lineRead.substring(3);
+						}
+						return lineRead;
+					}
+				}
+				
+				if(lineRead.charAt(j-1)==list.get(i).charAt(j-1) && lineRead.length()<list.get(i).length()){
+					list.add(i,lineRead);
+				}
+			}
+		}
+		if(i==list.size()){
+			list.add(lineRead);
+		}
+		lineRead = br.readLine();
+		if(lineRead!=null){
+			lineRead = lineRead.substring(3);
+		}
+		return lineRead;
+	}
+
+
 	public static String fileSearch(String command, BufferedReader br)
 			throws IOException {
-		
+
 		String lineRead="";
 		String tokenWithSpace = " " + command.substring(7).toLowerCase() + " ";
 		String lineReadWithSpace = "";
@@ -169,14 +202,14 @@ public class TextBuddy {
 				returnable = lineRead;
 			}
 		}while(lineRead!=null);
-		
+
 		if(returnable.equals("")){
 			returnable = MSG_NOT_FOUND;
 			System.out.println(MSG_NOT_FOUND);
 		}
 		br.close();
 		return returnable;
-		
+
 	}
 
 	private static void fileDisplay(String checkEmpty, BufferedReader br)
