@@ -2,7 +2,6 @@ package textbuddies;
 import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
