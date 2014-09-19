@@ -10,9 +10,9 @@ import java.util.*;
 import java.io.*;
 
 public class TextBuddy {
-	private static final int MSG_WRONG = -1;
-	private static final int MSG_RIGHT = 1;
-	private static final int MSG_END = 0;
+	private static final String SYSTEM_WRONG = "-1";
+	private static final String SYSTEM_RIGHT = "1";
+	private static final String SYSTEM_END = "0";
 	private static String textFile = "";
 	public static final String MSG_ADD = "Added to ";
 	private static final String MSG_DELETE = "Deleted from ";
@@ -21,32 +21,33 @@ public class TextBuddy {
 	private static final String MSG_CLEAR = "All content deleted from ";
 	private static final String MSG_EMPTY = " is empty";
 	private static final String MSG_NOT_FOUND = "Word not found";
+	private static final String MSG_WRONG = "wrong command";
+	private static final int DELETE_LENGTH = 7;
+	
 
 	public static void main(String[] args) throws Exception, IOException {
-		int cont = MSG_RIGHT;
+		String cont = SYSTEM_RIGHT;
 		System.out.println("Welcome to TextBuddy. " + args[0] + " is ready for use");
 		textFile = args[0];
-
+		Scanner sc = new Scanner(System.in);
+		String command = "";
 		do{
-			cont = commandChoose(textFile);
-			//System.out.println();
-			if(cont == MSG_WRONG){
-				System.out.println("wrong command");
+			System.out.print("command: ");
+			command = sc.nextLine();
+			cont = chooseCommand(textFile,command);
+			
+			if(cont.equals(SYSTEM_WRONG)){
+				System.out.println(MSG_WRONG);
 			}
-		}while(cont!=MSG_END);
+		}while(!cont.equals(SYSTEM_END));
 	}
 
-	public static int commandChoose(String newFile) throws IOException {
+	public static String chooseCommand(String newFile, String command) throws IOException {
 
-		System.out.print("command: ");
-		Scanner sc = new Scanner(System.in);
-		String command = ""+ sc.nextLine();
 		String deleteElig = "temporaryfiller";
-		String redisplay = "";
-		String checkEmpty = "";
+		String forCheckEmpty = "";
 
 		File file = new File(newFile);
-		// if file doesnt exist, then create it
 		if (!file.exists()) {
 			file.createNewFile();
 		}
@@ -55,41 +56,40 @@ public class TextBuddy {
 		if(command.equals("exit")){
 			int type = 1;
 			fileExit(file, br,type);
-			return MSG_END;
+			return SYSTEM_END;
 		}
 		else if(command.equals("exitall")){
 			int type = 0;
 			fileExit(file,br,type);
-			return MSG_END;
+			return SYSTEM_END;
 		}
 		//substring length depends on length of command
 		else if(command.substring(0,4).equals("add ")){
 			fileAdd(command, file, br);
-			return MSG_RIGHT;
+			return SYSTEM_RIGHT;
 		}
 		else if(command.substring(0,4).equals("sort")){
-			fileSort(file, br);
-			return MSG_RIGHT;
+			return fileSort(file, br);
 		}
 		else if(command.substring(0,5).equals("clear")){
 			fileClear(deleteElig, file, br);
-			return MSG_RIGHT;
+			return SYSTEM_RIGHT;
 		}
 		else if(command.substring(0,6).equals("delete")){
 			fileDelete(command, file, br);
-			return MSG_RIGHT;
+			return SYSTEM_RIGHT;
 		}
 		else if(command.substring(0,6).equals("search")){
 			fileSearch(command,br);
-			return MSG_RIGHT;
+			return SYSTEM_RIGHT;
 		}
 		else if(command.substring(0,7).equals("display")){
-			fileDisplay(checkEmpty, br);
-			return MSG_RIGHT;
+			fileDisplay(forCheckEmpty, br);
+			return SYSTEM_RIGHT;
 		}
 
 		br.close();
-		return MSG_WRONG;
+		return SYSTEM_WRONG;
 	}
 
 	public static String fileSort(File file, BufferedReader br) throws IOException{
@@ -136,6 +136,7 @@ public class TextBuddy {
 		BufferedWriter bw = new BufferedWriter(fw);
 		bw.write(temp2);
 		bw.close();
+		fw.close();
 		return temp2;
 	}
 
@@ -165,6 +166,11 @@ public class TextBuddy {
 				
 				if(lineRead.charAt(j-1)==list.get(i).charAt(j-1) && lineRead.length()<list.get(i).length()){
 					list.add(i,lineRead);
+					lineRead = br.readLine();
+					if(lineRead!=null){
+						lineRead = lineRead.substring(3);
+					}
+					return lineRead;
 				}
 			}
 		}
@@ -212,16 +218,16 @@ public class TextBuddy {
 
 	}
 
-	private static void fileDisplay(String checkEmpty, BufferedReader br)
+	private static void fileDisplay(String forCheckEmpty, BufferedReader br)
 			throws IOException {
 		String redisplay;
 		//read each line of text and print them
 		while((redisplay = br.readLine())!=null){
 			System.out.println(redisplay);
-			checkEmpty = redisplay;
+			forCheckEmpty = redisplay;
 		}
 		//if no lines are read, it is empty
-		if(checkEmpty.equals("")){
+		if(forCheckEmpty.equals("")){
 			System.out.println(textFile + MSG_EMPTY);
 		}
 		br.close();
@@ -230,7 +236,7 @@ public class TextBuddy {
 	private static void fileDelete(String command, File file, BufferedReader br)
 			throws IOException {
 		//extra feature to take "delete" as "delete 1"
-		if(command.length()<7){
+		if(command.length()<DELETE_LENGTH){
 			command = command + " 1";	
 		}
 		//text without the command is entered into method
@@ -264,8 +270,10 @@ public class TextBuddy {
 		try {
 			br.close();
 			//delete file after use, for convenience
-			if (type==0 && file.delete()) {
+			
+			if (type==0) {
 				System.out.println(file.getName() + " is deleted!");
+				file.delete();
 			} 
 			else if(type!=1){
 				System.out.println(MSG_DELETEFAIL);
